@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Task {{ task.id }}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h2>Task Details</h2>
+
+    <div class="detail-card">
+        <div class="detail-row">
+            <span class="detail-label">ID</span>
+            <span class="detail-value">{{ task.id }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Title</span>
+            <span class="detail-value">{{ task.title }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">
+                {% if task.status == 'Completed' %}
+                    <span class="status-badge status-completed">✅ {{ task.status }}</span>
+                {% elif task.status == 'In Progress' %}
+                    <span class="status-badge status-inprogress">⏳ {{ task.status }}</span>
+                {% else %}
+                    <span class="status-badge status-pending">❌ {{ task.status }}</span>
+                {% endif %}
+            </span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Priority</span>
+            <span class="detail-value">
+                <span class="priority-pill priority-{{ task.priority }}">{{ task.priority }}</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="detail-actions">
+        <a href="{{ url_for('edit_task', id=task.id) }}" class="button-link">Edit</a>
+        <form method="post" action="{{ url_for('delete_task', id=task.id) }}">
+            <button type="submit" class="button-link danger">Delete</button>
+        </form>
+        <a href="{{ url_for('index') }}" class="button-link secondary">Back to All Tasks</a>
+    </div>
+</section>
+{% endblock %}

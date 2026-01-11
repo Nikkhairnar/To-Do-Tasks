@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}All Tasks{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h2>Dashboard</h2>
+    <div class="stats">
+        <div class="stat-card">
+            <span class="stat-label">Total</span>
+            <span class="stat-value">{{ total }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Completed</span>
+            <span class="stat-value">{{ completed }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">In Progress</span>
+            <span class="stat-value">{{ in_progress }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Pending</span>
+            <span class="stat-value">{{ pending }}</span>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <h2>
+            {% if priority_filter %}
+                Tasks (Priority: {{ priority_filter }})
+            {% else %}
+                All Tasks
+            {% endif %}
+        </h2>
+        <div class="section-actions">
+            <a href="{{ url_for('index') }}" class="button-link secondary">Reset</a>
+            <div class="priority-filters">
+                <span>Filter:</span>
+                <a href="{{ url_for('filter_priority', name='High') }}">High</a>
+                <a href="{{ url_for('filter_priority', name='Medium') }}">Medium</a>
+                <a href="{{ url_for('filter_priority', name='Low') }}">Low</a>
+            </div>
+        </div>
+    </div>
+
+    {% if tasks %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Actions</th>
+        </tr>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.id }}</td>
+            <td>{{ task.title|upper }}</td>
+            <td>
+                {% if task.status == 'Completed' %}
+                    <span class="status-badge status-completed">✅ {{ task.status }}</span>
+                {% elif task.status == 'In Progress' %}
+                    <span class="status-badge status-inprogress">⏳ {{ task.status }}</span>
+                {% else %}
+                    <span class="status-badge status-pending">❌ {{ task.status }}</span>
+                {% endif %}
+            </td>
+            <td>
+                <span class="priority-pill priority-{{ task.priority }}">{{ task.priority }}</span>
+            </td>
+            <td class="actions">
+                <a href="{{ url_for('task_detail', id=task.id) }}" class="button-link small">View</a>
+                <a href="{{ url_for('edit_task', id=task.id) }}" class="button-link small secondary">Edit</a>
+                <form method="post" action="{{ url_for('delete_task', id=task.id) }}">
+                    <button type="submit" class="button-link small danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No tasks yet. <a href="{{ url_for('add') }}">Add one</a>.</p>
+    {% endif %}
+</section>
+{% endblock %}
